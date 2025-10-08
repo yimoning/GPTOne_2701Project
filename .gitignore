@@ -207,3 +207,14 @@ marimo/_lsp/
 __marimo__/
 
 .DS_Store
+
+# Project specific
+backend/saved_model/
+backend/venv_backend/
+training/venv_training/
+training/models/
+*.safetensors
+*.bin
+data/*.csv
+predictions.jsonl
+retrain.log

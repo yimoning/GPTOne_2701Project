@@ -1,0 +1,90 @@
+name: Retrain Model on New Data
+
+on:
+  # Trigger on push to data directory
+  push:
+    paths:
+      - 'data/train_*.csv'
+  
+  # Trigger manually
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Model version name'
+        required: false
+        default: 'auto'
+  
+  # Schedule: Run every Sunday at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * 0'
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        cd training
+        pip install -r requirements.txt
+        
+    - name: Train model
+      run: |
+        cd training
+        VERSION=${{ github.event.inputs.version }}
+        if [ "$VERSION" == "auto" ] || [ -z "$VERSION" ]; then
+          VERSION=$(date +%Y%m%d_%H%M%S)
+        fi
+        
+        python train.py \
+          --data-path ../data \
+          --output-dir ./models \
+          --version $VERSION \
+          --epochs 5 \
+          --batch-size 64
+      
+    - name: Upload model artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: trained-model
+        path: training/models/
+        
+    - name: Evaluate model
+      run: |
+        cd training
+        # Extract metrics from metadata
+        VERSION=$(ls -t models | head -1)
+        python -c "
+        import json
+        with open(f'models/$VERSION/metadata.json') as f:
+            metadata = json.load(f)
+            accuracy = metadata['metrics']['accuracy']
+            print(f'Model accuracy: {accuracy:.4f}')
+            
+            # Fail if accuracy is too low
+            if accuracy < 0.90:
+                raise ValueError(f'Model accuracy {accuracy} below threshold 0.90')
+        "
+    
+    - name: Create Release (if manual trigger)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: model-${{ github.event.inputs.version }}
+        release_name: Model ${{ github.event.inputs.version }}
+        body: |
+          Automated model retraining completed.
+          
+          Check artifacts for model files and metrics.
+        draft: false
+        prerelease: false
