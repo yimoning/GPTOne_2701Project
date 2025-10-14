@@ -1,0 +1,11 @@
+# Backend requirements - CPU-only PyTorch for smaller footprint
+# Use this for production deployment without GPU
+
+--index-url https://download.pytorch.org/whl/cpu
+
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+torch==2.1.0+cpu              # CPU-only version (~100MB vs 2GB)
+transformers==4.35.0
+pydantic==2.5.0
+python-multipart==0.0.6

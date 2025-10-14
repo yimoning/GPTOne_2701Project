@@ -1,0 +1,13 @@
+# Storage dependencies (optional - only install what you need)
+
+# For AWS S3 storage
+boto3==1.28.0
+
+# For HuggingFace Hub storage  
+huggingface_hub==0.17.0
+
+# For Google Cloud Storage
+# google-cloud-storage==2.10.0
+
+# For Azure Blob Storage
+# azure-storage-blob==12.18.0
