@@ -218,3 +218,6 @@ training/models/
 data/*.csv
 predictions.jsonl
 retrain.log
+
+# Claude code
+CLAUDE.md
