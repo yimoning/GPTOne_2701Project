@@ -69,15 +69,35 @@ clean:
 	rm -rf backend/venv_backend
 	@echo "✓ Virtual environments removed"
 
-# Docker commands
+# # Docker commands
+# docker-build-backend:
+# 	docker build -t ai-detector-backend ./backend
+
+# docker-build-training:
+# 	docker build -t ai-detector-training ./training
+
+# docker-run-backend:
+# 	docker run -p 8000:8000 ai-detector-backend
+# Build backend Docker image
+
 docker-build-backend:
-	docker build -t ai-detector-backend ./backend
+	docker build -t ai-detector-backend -f backend/Dockerfile backend
 
+# Build training Docker image
 docker-build-training:
-	docker build -t ai-detector-training ./training
+	docker build -t ai-detector-training -f training/Dockerfile training
 
+# Run backend with model mount
 docker-run-backend:
-	docker run -p 8000:8000 ai-detector-backend
+	docker run -p 8000:8000 \
+		-v "$$(PWD)/saved_model:/saved_model" \
+		ai-detector-backend
+
+docker-run-training:
+	docker run --rm \
+	-v "$$(PWD)/data:/app/data" \
+	-v "$$(PWD)/training/models:/app/models" \
+	ai-detector-training
 
 # Development helpers
 lint-backend:

@@ -9,7 +9,7 @@ echo "================================"
 echo "Timestamp: $(date)"
 
 # Configuration
-DATA_PATH="../data"
+DATA_PATH="./data"
 OUTPUT_DIR="./models"
 VERSION=$(date +%Y%m%d_%H%M%S)
 MIN_ACCURACY=0.90

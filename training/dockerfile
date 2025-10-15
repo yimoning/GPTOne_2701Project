@@ -1,0 +1,37 @@
+# ===============================
+# Base image
+# ===============================
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# ===============================
+# Install system dependencies
+# ===============================
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    git \
+    bc \
+    && rm -rf /var/lib/apt/lists/*
+
+# ===============================
+# Copy files into container
+# ===============================
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY retrain.sh .
+COPY train.py .
+# COPY data ../data
+# COPY models ./models
+
+# ===============================
+# Make retrain.sh executable
+# ===============================
+RUN chmod +x retrain.sh
+
+# ===============================
+# Default command
+# ===============================
+CMD ["bash", "retrain.sh"]

@@ -283,7 +283,7 @@ class ModelTrainer:
 
 def main():
     parser = argparse.ArgumentParser(description='Train AI text detection model')
-    parser.add_argument('--data-path', type=str, default='../data', help='Path to training data')
+    parser.add_argument('--data-path', type=str, default='data', help='Path to training data')
     parser.add_argument('--output-dir', type=str, default='./models', help='Output directory for models')
     parser.add_argument('--epochs', type=int, default=5, help='Number of training epochs')
     parser.add_argument('--batch-size', type=int, default=64, help='Batch size')

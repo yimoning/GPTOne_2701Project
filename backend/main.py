@@ -72,15 +72,16 @@ async def load_model():
     # Path to saved model (supports versioning)
     # Priority: 1. Environment variable, 2. ./saved_model (default)
     if MODEL_VERSION and MODEL_VERSION != 'saved_model':
+        default_model_path = Path(__file__).parent.parent / "saved_model"
         model_path = Path(f"../training/models/{MODEL_VERSION}")
         if not model_path.exists():
-            model_path = Path("./saved_model")
+            model_path = default_model_path
     else:
-        model_path = Path("./saved_model")
+        model_path = default_model_path
     
     if not model_path.exists():
         logger.error(f"Model not found at {model_path}")
-        logger.info("Please save your trained model to ./saved_model/")
+        logger.info("Please save your trained model to ../saved_model/")
         raise FileNotFoundError(f"Model directory not found: {model_path}")
     
     try:
